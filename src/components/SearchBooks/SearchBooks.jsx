@@ -12,7 +12,6 @@ const SearchBooks = () => {
   const [visibleBooks, setVisibleBooks] = useState(10);
   const [showMore, setShowMore] = useState(false);
   const [order, setOrder] = useState("relevance");
-
   const handleSearch = async (event) => {
     event.preventDefault();
     let maxResults = order === "newest" ? 10 : 40;
