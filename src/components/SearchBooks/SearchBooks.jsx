@@ -16,7 +16,7 @@ const SearchBooks = () => {
 const dispatch = useDispatch()
   const handleSearch = (event) => {
     event.preventDefault();
-    let maxResults = order === "newest" ? 10 : 15;
+    let maxResults = order === "newest" ? 10 : 20;
     dispatch(fetchBooks({ searchTerm, maxResults, order, category }));
   };
 
