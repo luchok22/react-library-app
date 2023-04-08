@@ -1,40 +1,31 @@
 import React, { useMemo, useState } from "react";
-import axios from "axios";
-import BookCard from "../BooksCard/BookCard";
+import BookCard from "../BooksCard/BookCard.tsx";
 import scss from "./SearchBooks.module.scss";
-
+import { useDispatch, useSelector } from "react-redux";
+import { fetchBooks } from "../../redux/bookSlice.js";
 const orderBtn = ["newest", "relevance"];
-const categoryBtn = ["all", "Art", "Biography", "Computers", 'Cooking', 'Medical'];
+const categoryBtn = ["all", "Art", "Biography", "Computers", 'Cooking', 'Medical', "Science"];
 
 const SearchBooks = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [books, setBooks] = useState([]);
-  const [totalBooks, setTotalBooks] = useState(0);
-  const [visibleBooks, setVisibleBooks] = useState(10);
+  const { books, totalBooks } = useSelector((state) => state.books)
+  const [visibleBooks, setVisibleBooks] = useState(8);
   const [showMore, setShowMore] = useState(false);
   const [order, setOrder] = useState("relevance");
   const [category, setCategory] = useState("all");
-
-  const handleSearch = async (event) => {
+const dispatch = useDispatch()
+  const handleSearch = (event) => {
     event.preventDefault();
     let maxResults = order === "newest" ? 10 : 15;
-    let url = `https://www.googleapis.com/books/v1/volumes?q=${searchTerm}&maxResults=${maxResults}&orderBy=${order}`;
-    if (category !== "all") {
-      url += `&${category}`;
-    }
-    const response = await axios.get(url);
-    setBooks(response.data.items);
-    setTotalBooks(response.data.totalItems);
-    setVisibleBooks(8);
+    dispatch(fetchBooks({ searchTerm, maxResults, order, category }));
   };
-console.log(books.filter((book) => book.volumeInfo.categories?.includes(category)))
 
   const renderBooks = useMemo(() => {
     const filteredBooks = category === "all"
       ? books
       : books.filter((book) => book.volumeInfo.categories?.includes(category));
     
-    return filteredBooks.slice(0, visibleBooks).map((el) => <BookCard {...el} />);
+    return filteredBooks.slice(0, visibleBooks).map((el,index) => <BookCard {...el} key={index} />);
   }, [books, visibleBooks, category]);
   const handleShowMore = () => {
     setVisibleBooks(visibleBooks * 3);

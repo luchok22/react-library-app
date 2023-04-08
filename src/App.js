@@ -1,4 +1,4 @@
-import SearchBooks from "./components/SearchBooks/SearchBooks";
+import SearchBooks from "./components/SearchBooks/SearchBooks.jsx";
 
 function App() {
   return (

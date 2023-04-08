@@ -1,6 +1,18 @@
-import React from "react";
+import React, { FC } from "react";
 import scss from "./BookCard.module.scss";
-const BookCard = ({ volumeInfo }) => {
+interface BookCardProps{
+  volumeInfo: volumeInfoProps;
+}
+interface volumeInfoProps{
+  title: string;
+  categories: string;
+  authors: string;
+  imageLinks: imageLinksProps;
+}
+interface imageLinksProps{
+  thumbnail: string;
+}
+const BookCard: FC<|BookCardProps> = ({ volumeInfo }) => {
   return (
     <div className={scss.card}>
       <div className={scss.img}>
