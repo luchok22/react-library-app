@@ -1,47 +1,30 @@
-import React, { useMemo, useState } from "react";
-import BookCard from "../BooksCard/BookCard.tsx";
+import React from "react";
 import scss from "./SearchBooks.module.scss";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchBooks } from "../../redux/bookSlice.js";
-const orderBtn = ["newest", "relevance"];
-const categoryBtn = ["all", "Art", "Biography", "Computers", 'Cooking', 'Medical', "Science"];
+import { Link } from "react-router-dom";
+import BooksList from "../BooksList/BooksList";
 
-const SearchBooks = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const { books, totalBooks } = useSelector((state) => state.books)
-  const [visibleBooks, setVisibleBooks] = useState(8);
-  const [showMore, setShowMore] = useState(false);
-  const [order, setOrder] = useState("relevance");
-  const [category, setCategory] = useState("all");
-const dispatch = useDispatch()
-  const handleSearch = (event) => {
-    event.preventDefault();
-    let maxResults = order === "newest" ? 10 : 20;
-    dispatch(fetchBooks({ searchTerm, maxResults, order, category }));
-  };
-
-  const renderBooks = useMemo(() => {
-    const filteredBooks = category === "all"
-      ? books
-      : books.filter((book) => book.volumeInfo.categories?.includes(category));
-    
-    return filteredBooks.slice(0, visibleBooks).map((el,index) => <BookCard {...el} key={index} />);
-  }, [books, visibleBooks, category]);
-  const handleShowMore = () => {
-    setVisibleBooks(visibleBooks * 3);
-    setShowMore(true);
-  };
-
-  const handleInputChange = () => {
-    setShowMore(false);
-  };
-
+const SearchBooks = ({
+  orderBtn,
+  categoryBtn,
+  handleSearch,
+  handleInputChange,
+  handleShowMore,
+  searchTerm,
+  setSearchTerm,
+  category,
+  setCategory,
+  order,
+  visibleBooks,
+  setOrder,
+  totalBooks,
+  showMore,
+  books,
+}) => {
   return (
     <div className={scss.search}>
-      <div className={scss.back}>
+      <div className={searchTerm ? scss.activeBack : scss.back}>
         <h1>Search for Books</h1>
-        <form onSubmit={handleSearch}
-      >
+        <form onSubmit={handleSearch}>
           <input
             type="text"
             value={searchTerm}
@@ -51,34 +34,42 @@ const dispatch = useDispatch()
             }}
           />
           <div className={scss.sort}>
-          <select
-            value={category}
-            onChange={(event) => {
-              setCategory(event.target.value);
-              handleInputChange();
-            }}
-          >
-            {categoryBtn.map((category) => (
-              <option value={category}>{category}</option>
-            ))}
-          </select>
-          <select
-            value={order}
-            onChange={(event) => {
-              setOrder(event.target.value);
-              handleInputChange();
-            }}
-          >
-            {orderBtn.map((order) => (
-              <option value={order}>{order}</option>
-            ))}
-          </select>
+            <select
+              value={category}
+              onChange={(event) => {
+                setCategory(event.target.value);
+                handleInputChange();
+              }}
+            >
+              {categoryBtn.map((category) => (
+                <option value={category}>{category}</option>
+              ))}
+            </select>
+            <select
+              value={order}
+              onChange={(event) => {
+                setOrder(event.target.value);
+                handleInputChange();
+              }}
+            >
+              {orderBtn.map((order) => (
+                <option value={order}>{order}</option>
+              ))}
+            </select>
           </div>
         </form>
       </div>
       <div className={scss.container}>
-        <div className={scss.total}>Found {totalBooks} results</div>
-        <div className={scss.wrapper}>{renderBooks}</div>
+        <div className={scss.total}>
+          <p>Found {totalBooks} results</p>
+        </div>
+        <div className={scss.wrapper}>
+          <BooksList
+            category={category}
+            visibleBooks={visibleBooks}
+            books={books}
+          />
+        </div>
         <div className={scss.more}>
           {!showMore && books.length > 4 && (
             <button onClick={handleShowMore}>More Books</button>

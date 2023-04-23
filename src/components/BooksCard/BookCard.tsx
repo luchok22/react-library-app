@@ -13,7 +13,7 @@ interface imageLinksProps {
   thumbnail: string;
   smallThumbnail: string;
 }
-const BookCard: FC<BookCardProps> = ({ volumeInfo }) => {
+const BookCard: FC<BookCardProps> = ({ volumeInfo}) => {
   let thumbnail = volumeInfo.imageLinks && volumeInfo.imageLinks.smallThumbnail;
     return (
       <div className={scss.card}>
